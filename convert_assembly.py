@@ -1,7 +1,9 @@
+from asyncio import LifoQueue
 import os
 import riscv_cte as rc
 import riscv_func as rf
 from riscv_opcode import *
+from collections import deque
 
 def verificaçao(filename):
     extension = os.path.splitext(filename)
@@ -55,30 +57,27 @@ def getAssembly(binary):
     and components. It then modifies the assembly components and prints the format and
     modified assembly components.
     """
+
+
 def getAssembly(binary):
 
     instruction = convert_binary_to_hexadecimal(binary)
     opcode = getOpcode("0x" + str(instruction))
     instruction = int('0x'+instruction,16)
     
-    inst_type = rf.instruction_type(instruction & rc.OPCODE_MASK)
+    inst_type = rf.instruction_type(instruction & rc.FUNCT3_MASK)
     format, assembly = rf.instruction_parsing(inst_type,instruction)
     assembly = assembly.replace('[','')
     assembly = assembly.replace(']','')
     assembly = assembly.split(',')
     assembly = list(assembly)
+    assembly.reverse()
     assembly[0] = str(opcode)
+    create_file(assembly[0] + assembly[1] + assembly[2] +  assembly[3] + " " + assembly[4] + "-- "+ binary + " " + format )
 
-    create_file(assembly[0] + assembly[1] + assembly[2] + "-- "+ binary)
-    # assembly[0] = str(opcode)
-    # print(format)
-    # modify 0 position from array
-
-    # print(assembly)
-    # print(teste)
 
 def create_file(word):
-    with open("out.asm", 'a+') as file:
+    with open("out.asm", 'w') as file:
         file.writelines(word+"\n")
     file.close()
 
