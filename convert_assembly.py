@@ -73,11 +73,14 @@ def getAssembly(binary):
     assembly = list(assembly)
     assembly.reverse()
     assembly[0] = str(opcode)
-    create_file(assembly[0] + assembly[1] + assembly[2] +  assembly[3] + " " + assembly[4] + "-- "+ binary + " " + format )
-
-
-def create_file(word):
-    with open("out.asm", 'w') as file:
+    if inst_type == 'I':
+        append_file(assembly[0] + assembly[1] + assembly[2] +  assembly[3] + " " + assembly[4] + "-- "+ binary + " " + format )
+    elif inst_type == 'U': 
+        append_file(assembly[0] + " " + assembly[1]+ " " + assembly[2]  + "-- "+ binary + " " + format )
+    elif inst_type == 'R':
+        append_file(assembly[0] + assembly[1] + assembly[2] +  assembly[3] + " " + assembly[4] + "-- "+ binary + " " + format )
+def append_file(word):
+    with open("out.asm", 'a') as file:
         file.writelines(word+"\n")
     file.close()
 
@@ -88,6 +91,13 @@ def leitura_arquivo(filename):
             if line != '00000000000000000000000000000000\n' and line != '00100000010001010100001101010100\n' and line != '00001001100000100011101101101110\n' and line != '00001101010000110010011011011001\n' and line != '00010011000001000111011011011100\n':
                 getAssembly(line.replace("\n",""))
       
+
+def remove_file(filename):
+    os.remove(filename)
+
+def create_file_new(filename):
+    file = open(filename, 'w')
+    file.close()
 
 def lista_arquivos():
     """
@@ -116,11 +126,10 @@ def lista_arquivos():
     # for filename in files:
     #     print(filename)
 
+
+
 if __name__ == "__main__":
+    remove_file("out.asm")
+    create_file_new("out.asm")
     leitura_arquivo("crc.img")
-    # teste()
-    # lista_arquivos()
-    # name = input("Enter your name: ")
-    # verificaçao(name)
-    # print("extensao o arquivo:"+verificaçao)
-    # greet(name)
+
